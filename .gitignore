@@ -23,6 +23,7 @@ venv_chatbots/
 .coverage.*
 htmlcov/
 testing.ipynb
+notas_desarrollo.txt
 
 # Variables de entorno y credenciales (archivos con claves secretas)
 .env

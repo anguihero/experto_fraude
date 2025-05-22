@@ -17,8 +17,7 @@ CREATE TABLE IF NOT EXISTS usuarios (
 # Insertar usuarios por defecto (no se duplican si ya existen)
 usuarios_por_defecto = [
     ("admin", "123456"),
-    ("luna", "20090630"),
-    ("sen", "20191208")
+    ("sysadmin", "987654")
 ]
 
 for username, password in usuarios_por_defecto:
