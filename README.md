@@ -25,6 +25,7 @@ To develop an **intelligent conversational assistant** that:
 
 ## System Architecture
 
+```
 ┌──────────────────────────┐ ┌──────────────────────────────┐
 │ DOCUMENTACION_FRAUDE │────▶ │ ingestion_service │
 └──────────────────────────┘ │ - Vectorizes docs (FAISS) │
@@ -39,11 +40,13 @@ To develop an **intelligent conversational assistant** that:
 │ auth_service │────▶ │ api_gateway │
 │ - Verifies users │ │ - /chat /update /login endpoints │
 └────────────────────┘ └──────────────────────────────────┘
+```
 
 ---
 
 ## Project Structure
 
+```
 experto_fraude/
 ├── api_gateway/
 │ ├── main.py
@@ -74,6 +77,7 @@ experto_fraude/
 ├── init_db.py
 ├── notas_desarrollo.txt
 └── README.md
+```
 
 ---
 
