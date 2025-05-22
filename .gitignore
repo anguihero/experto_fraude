@@ -1,0 +1,60 @@
+# Python - Archivos compilados y caché
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Archivos de distribución / build (paquetes, instaladores)
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Entornos virtuales (virtual environments)
+venv/
+env/
+ENV/
+.venv/
+venv_chatbots/
+
+# Archivos de pruebas y cobertura (tests & coverage)
+.pytest_cache/
+.tox/
+.coverage
+.coverage.*
+htmlcov/
+testing.ipynb
+
+# Variables de entorno y credenciales (archivos con claves secretas)
+.env
+*.env
+.env.*
+
+# Archivos de registro (logs)
+*.log
+logs/
+
+# Bases de datos (SQLite u otras)
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+*.sqlite3-journal
+*.db-wal
+*.sqlite3-wal
+
+# Archivos de configuración de editor/IDE (VSCode, PyCharm, etc.)
+.vscode/
+*.code-workspace
+.idea/
+.project
+.pydevproject
+.settings/
+.history/
+
+# Archivos generados por el sistema operativo
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db

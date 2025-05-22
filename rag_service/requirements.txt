@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+langchain==0.1.20
+langchain-community==0.0.38
+# langchain-google-genai==0.0.6
+langchain-google-genai>=0.0.8
+langsmith==0.1.20
+google-generativeai
+faiss-gpu

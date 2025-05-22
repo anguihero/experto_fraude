@@ -1,0 +1,63 @@
+version: '3.9'  # Versión del esquema de Docker Compose que define cómo estructurar los servicios
+
+services:  # Bloque que contiene todos los contenedores/microservicios que se desplegarán
+
+  ingestion_service:  # Servicio que procesa documentos y genera/actualiza el índice FAISS
+    build: ./ingestion_service  # Construye la imagen Docker desde la carpeta ./ingestion_service
+    container_name: ingestion_service  # Nombre explícito del contenedor para referencia y debug
+    volumes:  # Volúmenes montados para compartir archivos entre el host y el contenedor
+      - ./ingestion_service/DOCUMENTACION_FRAUDE:/app/DOCUMENTACION_FRAUDE  # Documentos fuente a indexar
+      - ./ingestion_service/faiss_index:/app/faiss_index  # Carpeta donde se almacena el índice vectorial persistente
+      - ./logs/ingestion:/app/logs  # Carpeta dedicada a logs del servicio de ingesta
+    env_file:  # Carga de variables de entorno (como API Key de Gemini)
+      - ./ingestion_service/.env
+    ports:  # Exposición de puertos locales del host al contenedor
+      - "9000:9000"  # El servicio estará disponible en http://localhost:9000
+    networks:  # Redes a las que está conectado el contenedor
+      - rag_network  # Red interna para comunicarse con otros servicios como RAG y API Gateway
+
+  rag_service:  # Servicio que responde preguntas usando LangChain y el índice FAISS
+    build: ./rag_service  # Construye la imagen desde la carpeta ./rag_service
+    container_name: rag_service  # Nombre del contenedor de este microservicio
+    volumes:  # Volúmenes compartidos para código, logs e índice vectorial
+      - ./rag_service:/app  # Código fuente montado (útil en desarrollo)
+      - ./logs/rag:/app/logs  # Carpeta de logs del servicio RAG
+      - ./ingestion_service/faiss_index:/app/faiss_index  # Acceso compartido al índice FAISS
+    env_file:  # Variables de entorno, incluyendo GOOGLE_API_KEY
+      - ./rag_service/.env
+    ports:
+      - "8001:8000"  # Puerto para acceso opcional en desarrollo (ej: http://localhost:8001)
+    depends_on:  # Este servicio debe esperar a que 'ingestion_service' esté listo
+      - ingestion_service
+    networks:
+      - rag_network  # Conectado a la misma red que los demás servicios para comunicación directa
+
+  api_gateway:  # Servicio de orquestación y exposición de endpoints externos (FastAPI)
+    build: ./api_gateway  # Construcción desde la carpeta ./api_gateway
+    container_name: api_gateway  # Nombre asignado al contenedor del API Gateway
+    volumes:  # Volúmenes necesarios para ejecutar scripts internos y guardar logs
+      - ./ingestion_service:/app/ingestion_service  # Monta el código del ingestion_service para poder invocar desde subprocess
+      - ./logs/api:/app/logs  # Carpeta para guardar los logs del gateway
+    ports:
+      - "8000:8000"  # Puerto donde se expone el API Gateway (http://localhost:8000)
+    depends_on:  # Este servicio espera que el servicio RAG esté disponible
+      - rag_service
+    networks:
+      - rag_network  # Red interna compartida para conectar con ingestion y RAG
+
+  auth_service:
+    build: ./auth_service         # Ruta local donde está Dockerfile para Construcción desde la carpeta
+    container_name: auth_service  # Nombre asignado al contenedor del autenticador
+    ports:
+      - "9001:9001"               # Expone la API en http://localhost:9001
+    volumes:
+      - ./auth_service:/app       # Monta el código fuente dentro del contenedor
+      - ./auth_service/usuarios.db:/app/usuarios.db  # Persistencia de base de datos SQLite
+    env_file:
+      - ./auth_service/.env       # Carga variables como MASTER_KEY desde archivo .env
+    networks:
+      - rag_network               # Conexión con otros servicios (como api_gateway)
+
+networks:  # Definición de redes Docker para aislar y conectar servicios entre sí
+  rag_network:  # Nombre de la red compartida por los tres servicios
+    driver: bridge  # Tipo de red Docker (la opción "bridge" es la más común y por defecto)

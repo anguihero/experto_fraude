@@ -1,0 +1,19 @@
+# Core FastAPI
+fastapi
+uvicorn[standard]
+
+# Document parsing
+pypdf
+unstructured
+python-docx
+
+# NLP tools
+nltk
+
+# Langchain ecosystem (compatibles entre sí)
+faiss-cpu
+langchain==0.1.20
+langchain-community==0.0.38
+langchain-google-genai==0.0.6
+langsmith==0.1.20
+google-generativeai

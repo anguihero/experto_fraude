@@ -1,0 +1,63 @@
+Crear el entorno virtual
+python -m venv venv_chatbots
+
+Permitir la ejecución de scripts (solo la primera vez, si es necesario)
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+Activar el entorno virtual
+.\venv_chatbots\Scripts\Activate.ps1
+
+desactivar el entorno al terminar de trabajar
+deactivate
+
+USO - ENDPOINTS:
+
+
+Endpoint del Chatbot
+URL: http://localhost:8000/chat
+Método: POST
+Content-Type: application/json
+
+postar el siguiente cuerpo :
+{
+  "message": "¿Cuáles son las señales típicas de fraude interno?"
+}
+se recibe el siguiente cuerpo:
+{
+  "respuesta": "Las señales típicas de fraude interno incluyen acceso inusual a sistemas, manipulación de registros contables, resistencias a auditorías y discrepancias en inventarios, entre otros..."
+}
+
+# ---------------------------------------------------------------------------- #
+
+crear base de datos de usuarios para autenticar 
+agregar  usuarios por defecto
+python auth_service/init_db.py
+
+# ---------------------------------------------------------------------------- #
+Endpoint de actualización de la base de conocimiento
+reindexa automáticamente cualquier nuevo archivo agregado a DOCUMENTACION_FRAUDE
+para manualmente actualizar la base de conocimiento cuando se tengan nuevos documentos en la carpeta DOCUMENTACION_FRAUDE/ realizar un POST a:
+http://localhost:8000/actualizar-documentos
+
+Chatbot Experto en Fraude
+http://localhost:8000/experto_fraude/docs
+
+Servicio de Ingesta RAG
+http://localhost:9000/docs
+
+
+# ---------------------------------------------------------------------------- #
+Reiniciar todo para aplicar los cambios
+docker-compose down -v
+docker-compose up --build
+
+# ---------------------------------------------------------------------------- #
+build.sh — Reconstrucción total del stack
+¿Cómo usarlo?
+1.Guarda el contenido en un archivo en la raíz de tu proyecto como build.sh
+
+2. Dale permisos de ejecución:
+chmod +x build.sh
+
+3. Ejecútalo:
+./build.sh
